@@ -1,0 +1,8 @@
+<strings>
+    <string id="AppName">Bergsteigen</string>
+    <string id="labelHeartRate">HF</string>
+    <string id="labelAltitude">Höhe</string>
+    <string id="labelElapsedTime">Dauer</string>
+    <string id="labelSun">Sonne</string>
+    <string id="labelDistance">Strecke</string>
+</strings>

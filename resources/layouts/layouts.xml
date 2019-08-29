@@ -1,0 +1,45 @@
+<layouts>
+    <layout id="MainLayout1">
+        <drawable class="Background1" />
+        <label id="clockTime"             x="center" y="-3"  color="Graphics.COLOR_WHITE"   justification="Graphics.TEXT_JUSTIFY_CENTER" font="Graphics.FONT_LARGE" />
+
+        <label id="labelAltitude"         x="105"    y="40"  color="Graphics.COLOR_DK_GRAY" justification="Graphics.TEXT_JUSTIFY_RIGHT"  font="Graphics.FONT_SMALL" />
+        <label id="altitude"              x="95"     y="65"  color="Graphics.COLOR_BLACK"   justification="Graphics.TEXT_JUSTIFY_RIGHT"  font="Graphics.FONT_NUMBER_MEDIUM" />
+        <label id="unitAltitude"          x="98"     y="77"  color="Graphics.COLOR_BLACK"   justification="Graphics.TEXT_JUSTIFY_LEFT"   font="Graphics.FONT_LARGE" />
+
+        <label id="labelCurrentHeartRate" x="195"    y="40"  color="Graphics.COLOR_DK_GRAY" justification="Graphics.TEXT_JUSTIFY_RIGHT"  font="Graphics.FONT_SMALL" />
+        <label id="currentHeartRate"      x="210"    y="65"  color="Graphics.COLOR_BLACK"   justification="Graphics.TEXT_JUSTIFY_RIGHT"  font="Graphics.FONT_NUMBER_MEDIUM" />
+
+        <label id="totalAscent"           x="104"    y="130" color="Graphics.COLOR_BLACK"   justification="Graphics.TEXT_JUSTIFY_RIGHT"  font="Graphics.FONT_LARGE" />
+        <label id="totalDescent"          x="104"    y="160" color="Graphics.COLOR_BLACK"   justification="Graphics.TEXT_JUSTIFY_RIGHT"  font="Graphics.FONT_LARGE" />
+
+        <label id="labelElapsedTime"      x="205"    y="165" color="Graphics.COLOR_DK_GRAY" justification="Graphics.TEXT_JUSTIFY_RIGHT"  font="Graphics.FONT_SMALL" />
+        <label id="elapsedTime"           x="210"    y="130" color="Graphics.COLOR_BLACK"   justification="Graphics.TEXT_JUSTIFY_RIGHT"  font="Graphics.FONT_NUMBER_MILD" />
+    </layout>
+
+	<layout id="MainLayout2">
+        <drawable class="Background2" />
+        <label id="clockTime"             x="center" y="-3"   color="Graphics.COLOR_WHITE"  justification="Graphics.TEXT_JUSTIFY_CENTER" font="Graphics.FONT_LARGE" />
+
+        <label id="labelLocation"         x="130"    y="32"  color="Graphics.COLOR_DK_GRAY" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="Graphics.FONT_SMALL" />
+        <label id="currentLat"            x="130"    y="60"  color="Graphics.COLOR_BLACK"   justification="Graphics.TEXT_JUSTIFY_RIGHT" font="Graphics.FONT_SMALL" />
+        <label id="currentLon"            x="130"    y="85"  color="Graphics.COLOR_BLACK"   justification="Graphics.TEXT_JUSTIFY_RIGHT" font="Graphics.FONT_SMALL" />
+
+        <label id="labelSun"              x="210"    y="32"  color="Graphics.COLOR_DK_GRAY" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="Graphics.FONT_SMALL" />
+        <label id="sunrise"               x="210"    y="57"  color="Graphics.COLOR_BLACK"   justification="Graphics.TEXT_JUSTIFY_RIGHT" font="Graphics.FONT_LARGE" />
+        <label id="sunset"                x="210"    y="82"  color="Graphics.COLOR_BLACK"   justification="Graphics.TEXT_JUSTIFY_RIGHT" font="Graphics.FONT_LARGE" />
+
+        <label id="currentHeading"        x="50"     y="109" color="Graphics.COLOR_BLACK"   justification="Graphics.TEXT_JUSTIFY_LEFT"  font="Graphics.FONT_XTINY" />
+        <label id="currentHeadingDeg"     x="130"    y="109" color="Graphics.COLOR_BLACK"   justification="Graphics.TEXT_JUSTIFY_RIGHT" font="Graphics.FONT_XTINY" />
+
+        <label id="labelCalories"         x="85"     y="160" color="Graphics.COLOR_DK_GRAY" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="Graphics.FONT_SMALL" />
+        <label id="calories"              x="90"     y="130" color="Graphics.COLOR_BLACK"   justification="Graphics.TEXT_JUSTIFY_RIGHT" font="Graphics.FONT_NUMBER_MILD" />
+
+        <label id="labelElapsedDistance"  x="205"    y="160" color="Graphics.COLOR_DK_GRAY" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="Graphics.FONT_SMALL" />
+        <label id="elapsedDistance"       x="190"    y="130" color="Graphics.COLOR_BLACK"   justification="Graphics.TEXT_JUSTIFY_RIGHT" font="Graphics.FONT_NUMBER_MILD" />
+        <label id="unitElapsedDistance"   x="192"    y="137" color="Graphics.COLOR_BLACK"   justification="Graphics.TEXT_JUSTIFY_LEFT"  font="Graphics.FONT_SMALL" />
+
+        <label id="temperature"           x="47"     y="192" color="Graphics.COLOR_BLACK"   justification="Graphics.TEXT_JUSTIFY_LEFT"  font="Graphics.FONT_XTINY" />
+        <label id="meanSeaLevelPressure"  x="195"    y="192" color="Graphics.COLOR_BLACK"   justification="Graphics.TEXT_JUSTIFY_RIGHT" font="Graphics.FONT_XTINY" />
+	</layout>
+</layouts>
