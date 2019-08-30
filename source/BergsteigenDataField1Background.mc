@@ -33,6 +33,16 @@ class Background1 extends WatchUi.Drawable {
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_BLACK);
         dc.fillRectangle(0, 0, 240, 30);
         dc.fillRectangle(0, 215, 240, 240);
+        // draw arrows for ascent and descent
+        dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_TRANSPARENT);
+        dc.setPenWidth(2);
+        dc.drawLine(112, 141, 107, 146);
+        dc.drawLine(112, 141, 112, 158);
+        dc.drawLine(112, 141, 117, 146);
+        dc.drawLine(112, 187, 107, 182);
+        dc.drawLine(112, 187, 112, 170);
+        dc.drawLine(112, 187, 117, 182);
+
     }
 
 }

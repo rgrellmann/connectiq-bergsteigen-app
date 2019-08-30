@@ -4,6 +4,7 @@ using Toybox.Time;
 using Toybox.System;
 using Toybox.Lang;
 using Toybox.UserProfile;
+using Toybox.ActivityRecording;
 
 /*
  * A DataField which displays values of interest during a mountain tour
@@ -82,7 +83,7 @@ class BergsteigenDataField1View extends WatchUi.DataField {
      */
     function onUpdate(dc) {
         // Set the background color
-        View.findDrawableById("Background").setColor(getBackgroundColor());
+        View.findDrawableById("Background1").setColor(getBackgroundColor());
         // Set the foreground color and value
         var foregroundColor = Graphics.COLOR_BLACK;
         if (getBackgroundColor() == Graphics.COLOR_BLACK) {
@@ -94,12 +95,16 @@ class BergsteigenDataField1View extends WatchUi.DataField {
             drawable.setColor(foregroundColor);
         }
 
-        var value = View.findDrawableById("altitude");
-        value.setText(altitude.format("%d"));
-
+        var value;
+        // clock time
         value = View.findDrawableById("clockTime");
         value.setText(Lang.format("$1$:$2$", [clockTime.hour, clockTime.min.format("%02d")]));
 
+        // altitude
+        value = View.findDrawableById("altitude");
+        value.setText(altitude.format("%d"));
+
+        // elapsed time
         value = View.findDrawableById("elapsedTime");
         var elapsedSeconds = elapsedTime / 1000;
         var hours = elapsedSeconds / 3600;
@@ -111,6 +116,7 @@ class BergsteigenDataField1View extends WatchUi.DataField {
             value.setText(Lang.format("$1$:$2$", [minutes, seconds.format("%02d")]));
         }
 
+        // current heart rate
         value = View.findDrawableById("currentHeartRate");
         if (currentHeartRateZone == 6) {
             value.setColor(Graphics.COLOR_RED);
@@ -121,6 +127,7 @@ class BergsteigenDataField1View extends WatchUi.DataField {
         }
         value.setText(currentHeartRate.format("%d"));
 
+        // total ascent and descent
         value = View.findDrawableById("totalAscent");
         value.setText((totalAscent).format("%d") + 'm');
         value = View.findDrawableById("totalDescent");
@@ -134,15 +141,10 @@ class BergsteigenDataField1View extends WatchUi.DataField {
         // battery symbol at the lower edge of the screen
         drawBattery(battery, dc, 100, 220, 40, 15);
 
-        // draw arrows for ascent and descent
-        dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_TRANSPARENT);
-        dc.setPenWidth(2);
-        dc.drawLine(112, 141, 107, 146);
-        dc.drawLine(112, 141, 112, 158);
-        dc.drawLine(112, 141, 117, 146);
-        dc.drawLine(112, 187, 107, 182);
-        dc.drawLine(112, 187, 112, 170);
-        dc.drawLine(112, 187, 117, 182);
+        if (Toybox has :ActivityRecording && ((session == null) || (session.isRecording() == false))) {
+            dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_WHITE);
+            dc.drawText(dc.getWidth() / 2, dc.getHeight() / 2, Graphics.FONT_MEDIUM, "Press Button to\nStart Recording", Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+        }
     }
 
     /*

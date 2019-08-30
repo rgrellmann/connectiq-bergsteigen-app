@@ -98,7 +98,7 @@ class BergsteigenDataField2View extends WatchUi.DataField {
      */
     function onUpdate(dc) {
         // Set the background color
-        View.findDrawableById("Background").setColor(getBackgroundColor());
+        View.findDrawableById("Background2").setColor(getBackgroundColor());
         // Set the foreground color and value
         var foregroundColor = Graphics.COLOR_BLACK;
         if (getBackgroundColor() == Graphics.COLOR_BLACK) {
@@ -174,7 +174,13 @@ class BergsteigenDataField2View extends WatchUi.DataField {
 
         // all direct draw operations must be performed after View.onUpdate()
 
+        // battery symbol at the lower edge of the screen
         drawBattery(battery, dc, 100, 220, 40, 15);
+
+        if (Toybox has :ActivityRecording && ((session == null) || (session.isRecording() == false))) {
+            dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_WHITE);
+            dc.drawText(dc.getWidth() / 2, dc.getHeight() / 2, Graphics.FONT_MEDIUM, "Press Button to\nStart Recording", Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+        }
     }
 
     /*
