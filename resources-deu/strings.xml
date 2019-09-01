@@ -1,8 +1,17 @@
 <strings>
     <string id="AppName">Bergsteigen</string>
+    <string id="activityName">Bergsteigen</string>
+
     <string id="labelHeartRate">HF</string>
     <string id="labelAltitude">Höhe</string>
     <string id="labelElapsedTime">Dauer</string>
+
     <string id="labelSun">Sonne</string>
     <string id="labelDistance">Strecke</string>
+
+    <string id="pressButton">Start: Knopf drücken</string>
+
+    <string id="pause">Pause</string>
+    <string id="save">Speichern</string>
+    <string id="discard">Verwerfen</string>
 </strings>

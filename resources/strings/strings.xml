@@ -1,10 +1,17 @@
 <strings>
     <string id="AppName">Mountaineering</string>
-
-    <string id="labelSun">Sun</string>
-    <string id="labelDistance">Dist</string>
+    <string id="activityName">Mountaineering</string>
 
     <string id="labelHeartRate">HR</string>
     <string id="labelAltitude">Alt</string>
     <string id="labelElapsedTime">Duration</string>
+
+    <string id="labelSun">Sun</string>
+    <string id="labelDistance">Dist</string>
+    
+    <string id="pressButton">Press Button to Start</string>
+
+    <string id="pause">Pause</string>
+    <string id="save">Save</string>
+    <string id="discard">Discard</string>
 </strings>

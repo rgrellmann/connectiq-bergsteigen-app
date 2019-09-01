@@ -12,12 +12,10 @@ using Toybox.ActivityRecording;
  * while walking or climbing.
  * Have a look at BergsteigenDataField2 for additional values.
  */
-class BergsteigenDataField1View extends WatchUi.DataField {
+class BergsteigenDataField1View extends BergsteigenDataFieldAbstract {
 
     protected var altitude = 0;
-    protected var clockTime;
     protected var elapsedTime = 0;
-    protected var battery = 0;
     protected var currentHeartRate = 0;
     protected var currentHeartRateZone = 0;
     protected var totalAscent = 0;
@@ -25,8 +23,8 @@ class BergsteigenDataField1View extends WatchUi.DataField {
     protected var hrZoneInfo = [];
 
     function initialize() {
-        DataField.initialize();
-        clockTime = System.getClockTime();
+        println("BergsteigenDataField1View.initialize");
+        BergsteigenDataFieldAbstract.initialize();
         hrZoneInfo = UserProfile.getHeartRateZones(UserProfile.getCurrentSport());
     }
 
@@ -36,6 +34,8 @@ class BergsteigenDataField1View extends WatchUi.DataField {
      * @param Graphics.DC dc
      */
     function onLayout(dc) {
+        println("BergsteigenDataField1View.onLayout");
+        DataField.onLayout(dc);
         View.setLayout(Rez.Layouts.MainLayout1(dc));
         View.findDrawableById("unitAltitude").setText("m");
         View.findDrawableById("labelAltitude").setText(Rez.Strings.labelAltitude);
@@ -52,6 +52,7 @@ class BergsteigenDataField1View extends WatchUi.DataField {
      * @param Activity.Info info
      */
     function compute(info) {
+        println("BergsteigenDataField1View.compute");
         clockTime = System.getClockTime();
         battery = System.getSystemStats().battery;
         // initialize all numeric properties which should be part of info
@@ -82,6 +83,7 @@ class BergsteigenDataField1View extends WatchUi.DataField {
      * @param Graphics.Dc dc
      */
     function onUpdate(dc) {
+        println("BergsteigenDataField1View.onUpdate");
         // Set the background color
         View.findDrawableById("Background1").setColor(getBackgroundColor());
         // Set the foreground color and value
@@ -134,43 +136,18 @@ class BergsteigenDataField1View extends WatchUi.DataField {
         value.setText((totalDescent).format("%d") + 'm');
 
         // Call parent's onUpdate(dc) to redraw the layout
-        View.onUpdate(dc);
+        DataField.onUpdate(dc);
 
         // all direct draw operations must be performed after View.onUpdate()
 
         // battery symbol at the lower edge of the screen
         drawBattery(battery, dc, 100, 220, 40, 15);
 
-        if (Toybox has :ActivityRecording && ((session == null) || (session.isRecording() == false))) {
+        var session = Application.getApp().session;
+        if ((session == null) || (session.isRecording() == false)) {
             dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_WHITE);
-            dc.drawText(dc.getWidth() / 2, dc.getHeight() / 2, Graphics.FONT_MEDIUM, "Press Button to\nStart Recording", Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+            dc.drawText(dc.getWidth() / 2, dc.getHeight() / 2, Graphics.FONT_SMALL, WatchUi.loadResource(Rez.Strings.pressButton), Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
         }
-    }
-
-    /*
-     * Draws a battery icon with a coloured level indicator
-     * @param Number battery
-     * @param Graphics.Dc dc
-     * @param Number xStart
-     * @param Number yStart
-     * @param Number width
-     * @param Number height
-     */
-    function drawBattery(battery, dc, xStart, yStart, width, height) {
-        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_WHITE);
-        dc.fillRectangle(xStart, yStart, width, height);
-        if (battery < 10) {
-            dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
-            dc.drawText(xStart + 3 + width / 2, yStart + 6, Graphics.FONT_XTINY, format("$1$%", [battery.format("%d")]), Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
-        } else if (battery < 25) {
-            dc.setColor(Graphics.COLOR_YELLOW, Graphics.COLOR_TRANSPARENT);
-        } else {
-            dc.setColor(Graphics.COLOR_GREEN, Graphics.COLOR_TRANSPARENT);
-        }
-        dc.fillRectangle(xStart + 1, yStart + 1, (width-2) * battery / 100, height - 2);
-
-        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_WHITE);
-        dc.fillRectangle(xStart + width - 1, yStart + 3, 4, height - 6);
     }
 
 }
