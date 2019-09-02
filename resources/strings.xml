@@ -3,8 +3,8 @@
     <string id="activityName">Mountaineering</string>
 
     <string id="labelHeartRate">HR</string>
-    <string id="labelAltitude">Alt</string>
-    <string id="labelElapsedTime">Duration</string>
+    <string id="labelAltitude">Altitude</string>
+    <string id="labelElapsedTime">El. Time</string>
 
     <string id="labelSun">Sun</string>
     <string id="labelDistance">Dist</string>

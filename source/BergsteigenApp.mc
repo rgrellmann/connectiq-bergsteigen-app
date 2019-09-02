@@ -4,8 +4,9 @@ using Toybox.Sensor;
 using Toybox.System;
 using Toybox.ActivityRecording;
 using Toybox.Activity;
+using Toybox.Attention;
 
-var debug = true;
+var debug = false;
 
 function println(message) {
     if (debug) {
@@ -119,7 +120,9 @@ class BergsteigenApp extends Application.AppBase {
         println("sensorInfo temperature: " + sensorInfo.temperature + " pressure: " + sensorInfo.pressure);
         var activityInfo = Activity.getActivityInfo();
         println("activityInfo ambientPressure: " + activityInfo.ambientPressure + " meanSeaLevelPressure: " + activityInfo.meanSeaLevelPressure + " rawAmbientPressure: " + activityInfo.rawAmbientPressure);
-        if (activityInfo != null && views != null && currentViewNumber != null && views[currentViewNumber] != null && views[currentViewNumber] has :compute) {
+        if (activityInfo != null && views != null && currentViewNumber != null
+            && views[currentViewNumber] != null && views[currentViewNumber] has :compute
+        ) {
             views[currentViewNumber].compute(activityInfo);
             WatchUi.requestUpdate();
         }
@@ -129,14 +132,20 @@ class BergsteigenApp extends Application.AppBase {
     function startStopSession() {
         println("BergsteigenApp.startStopSession");
         if (session == null) {
-            session = ActivityRecording.createSession({:name => WatchUi.loadResource(Rez.Strings.activityName), :sport => ActivityRecording.SPORT_MOUNTAINEERING}); // SPORT_HIKING
+            session = ActivityRecording.createSession({
+                :name => WatchUi.loadResource(Rez.Strings.activityName),
+                :sport => ActivityRecording.SPORT_MOUNTAINEERING  // SPORT_HIKING
+            });
             session.start();
+            vibrate();
             println("session created and started");
         } else if (session.isRecording() == false) {
             session.start();
+            vibrate();
             println("session continued");
         } else if (session.isRecording()) {
             session.stop();
+            vibrate();
             saveDiscardMenu();
             println("session stopped");
         }
@@ -167,6 +176,14 @@ class BergsteigenApp extends Application.AppBase {
         menu.addItem(new WatchUi.MenuItem(WatchUi.loadResource(Rez.Strings.discard), null, "discard", null));
         delegate = new BergsteigenSaveMenuDelegate();
         WatchUi.pushView(menu, delegate, WatchUi.SLIDE_IMMEDIATE);
+    }
+
+    // engage the vibration motor
+    function vibrate() {
+        if (Attention has :vibrate) {
+            var vibeData = [new Attention.VibeProfile(50, 500)];
+            Attention.vibrate(vibeData);
+        }
     }
 
 }

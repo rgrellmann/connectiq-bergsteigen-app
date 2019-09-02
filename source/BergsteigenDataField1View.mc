@@ -131,9 +131,9 @@ class BergsteigenDataField1View extends BergsteigenDataFieldAbstract {
 
         // total ascent and descent
         value = View.findDrawableById("totalAscent");
-        value.setText((totalAscent).format("%d") + 'm');
+        value.setText(totalAscent.format("%d") + 'm');
         value = View.findDrawableById("totalDescent");
-        value.setText((totalDescent).format("%d") + 'm');
+        value.setText(totalDescent.format("%d") + 'm');
 
         // Call parent's onUpdate(dc) to redraw the layout
         DataField.onUpdate(dc);
@@ -143,10 +143,15 @@ class BergsteigenDataField1View extends BergsteigenDataFieldAbstract {
         // battery symbol at the lower edge of the screen
         drawBattery(battery, dc, 100, 220, 40, 15);
 
+        // hint to press button
         var session = Application.getApp().session;
         if ((session == null) || (session.isRecording() == false)) {
             dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_WHITE);
-            dc.drawText(dc.getWidth() / 2, dc.getHeight() / 2, Graphics.FONT_SMALL, WatchUi.loadResource(Rez.Strings.pressButton), Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+            dc.drawText(
+                dc.getWidth() / 2, dc.getHeight() / 2, Graphics.FONT_SMALL,
+                WatchUi.loadResource(Rez.Strings.pressButton),
+                Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER
+            );
         }
     }
 
