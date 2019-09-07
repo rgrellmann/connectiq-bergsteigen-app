@@ -9,19 +9,34 @@ class BergsteigenDataFieldDelegate extends WatchUi.BehaviorDelegate {
         BehaviorDelegate.initialize();
     }
 
-    function onSelect() {
-        println("BergsteigenDataFieldDelegate.onSelect");
-        return BehaviorDelegate.onSelect();
-    }
+    // Input events
 
+    /*
+     * @param WatchUi::KeyEvent keyEvent
+     */
     function onKey(keyEvent) {
+        // KEY_ENTER = 4, KEY_ESC = 5
         println("BergsteigenDataFieldDelegate.onKey " + keyEvent.getKey());
-        if (keyEvent.getKey() == KEY_ENTER) {
+        if (keyEvent.getKey() == KEY_ENTER) { // 4
             Application.getApp().startStopSession();
-            WatchUi.requestUpdate();
             return true;
         }
         return false;
+    }
+
+    /*
+     * @param WatchUi::ClickEvent clickEvent
+     */
+    function onTap(clickEvent) {
+        println("BergsteigenDataFieldDelegate.onTap");
+        return BehaviorDelegate.onTap(clickEvent);
+    }
+
+    // Beahavior events
+
+    function onSelect() {
+        println("BergsteigenDataFieldDelegate.onSelect");
+        return BehaviorDelegate.onSelect();
     }
 
     function onNextPage() {
@@ -60,11 +75,6 @@ class BergsteigenDataFieldDelegate extends WatchUi.BehaviorDelegate {
     function onPreviousMode() {
         println("BergsteigenDataFieldDelegate.onPreviousMode");
         return BehaviorDelegate.onPreviousMode();
-    }
-
-    function onTap(clickEvent) {
-        println("BergsteigenDataFieldDelegate.onTap");
-        return BehaviorDelegate.onTap();
     }
 
 }

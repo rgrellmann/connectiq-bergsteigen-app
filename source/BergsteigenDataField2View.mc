@@ -13,7 +13,7 @@ using Toybox.Math;
  * and more information is packed on one page compared to BergsteigenDataField1.
  */
 
-class BergsteigenDataField2View extends BergsteigenDataFieldAbstract {
+class BergsteigenDataField2View extends BergsteigenDataFieldViewAbstract {
 
     hidden var calories = 0;
     hidden var elapsedDistance = 0;
@@ -27,7 +27,7 @@ class BergsteigenDataField2View extends BergsteigenDataFieldAbstract {
 
     function initialize() {
         println("BergsteigenDataField2View.initialize");
-        BergsteigenDataFieldAbstract.initialize();
+        BergsteigenDataFieldViewAbstract.initialize();
     }
 
     /*
@@ -36,6 +36,7 @@ class BergsteigenDataField2View extends BergsteigenDataFieldAbstract {
      * @param Graphics.DC dc
      */
     function onLayout(dc) {
+        println("BergsteigenDataField2View.onLayout");
         DataField.onLayout(dc);
         View.setLayout(Rez.Layouts.MainLayout2(dc));
         View.findDrawableById("unitElapsedDistance").setText("km");
@@ -54,7 +55,7 @@ class BergsteigenDataField2View extends BergsteigenDataFieldAbstract {
      * @param Activity.Info info
      */
     function compute(info) {
-        println("BergsteigenDataField2View.compute");
+        // println("BergsteigenDataField2View.compute");
         clockTime = System.getClockTime();
         battery = System.getSystemStats().battery;
         // initialize all numeric properties which should be part of info
@@ -67,6 +68,11 @@ class BergsteigenDataField2View extends BergsteigenDataFieldAbstract {
                     self[numberProperties[i]] = 0;
                 }
             }
+        }
+        if (info has :ambientPressure) {
+            println("info.ambientPressure: " + info.ambientPressure);
+        } else {
+            println("ambientPressure not available");
         }
         if (info has :currentLocation) {
             if (info.currentLocation != null) {
@@ -97,76 +103,78 @@ class BergsteigenDataField2View extends BergsteigenDataFieldAbstract {
      * @param Graphics.Dc dc
      */
     function onUpdate(dc) {
+        // println("BergsteigenDataField2View.onUpdate");
         // Set the background color
         View.findDrawableById("Background2").setColor(getBackgroundColor());
-        // Set the foreground color and value
+
+        // Set the foreground color
         var foregroundColor = Graphics.COLOR_BLACK;
         if (getBackgroundColor() == Graphics.COLOR_BLACK) {
             foregroundColor = Graphics.COLOR_WHITE;
         }
-        var drawables = ["calories", "elapsedDistance", "sunrise", "sunset", "currentLat", "currentLon", "temperature", "currentHeading", "currentHeadingDeg"];
+        var drawable;
+        var drawables = ["calories", "elapsedDistance", "sunrise", "sunset", "currentLat", "currentLon", "temperature", "currentHeading", "currentHeadingDeg", "meanSeaLevelPressure"];
         for (var i = 0; i < drawables.size(); i++) {
-            var drawable = View.findDrawableById(drawables[i]);
+            drawable = View.findDrawableById(drawables[i]);
             drawable.setColor(foregroundColor);
         }
 
-        var value;
         // clock time
-        value = View.findDrawableById("clockTime");
-        value.setText(Lang.format("$1$:$2$", [clockTime.hour, clockTime.min.format("%02d")]));
+        drawable = View.findDrawableById("clockTime");
+        drawable.setText(Lang.format("$1$:$2$", [clockTime.hour, clockTime.min.format("%02d")]));
 
         // position (lat/lon)
         if (currentLocation instanceof Toybox.Position.Location) {
             var locationDecimal = currentLocation.toDegrees();
-            value = View.findDrawableById("currentLat");
-            value.setText(locationDecimal[0].format("%.5f"));
-            value = View.findDrawableById("currentLon");
-            value.setText(locationDecimal[1].format("%.5f"));
+            drawable = View.findDrawableById("currentLat");
+            drawable.setText(locationDecimal[0].format("%.5f"));
+            drawable = View.findDrawableById("currentLon");
+            drawable.setText(locationDecimal[1].format("%.5f"));
         } else {
-            value = View.findDrawableById("currentLat");
-            value.setText("N/A");
-            value = View.findDrawableById("currentLon");
-            value.setText("N/A");
+            drawable = View.findDrawableById("currentLat");
+            drawable.setText("N/A");
+            drawable = View.findDrawableById("currentLon");
+            drawable.setText("N/A");
         }
 
         // heading
-        value = View.findDrawableById("currentHeading");
-        value.setText(getHeadingLetter(currentHeading));
-        value = View.findDrawableById("currentHeadingDeg");
+        drawable = View.findDrawableById("currentHeading");
+        drawable.setText(getHeadingLetter(currentHeading));
+        drawable = View.findDrawableById("currentHeadingDeg");
         var currentHeadingDeg = Math.toDegrees(currentHeading);
         if (currentHeadingDeg < 0) {
             currentHeadingDeg = 360 + currentHeadingDeg;
         }
-        value.setText(currentHeadingDeg.format("%d") + "°");
+        drawable.setText(currentHeadingDeg.format("%d") + "°");
 
         // sunrise/sunset
-        value = View.findDrawableById("sunrise");
+        drawable = View.findDrawableById("sunrise");
         if (sunrise instanceof Time.Gregorian.Info) {
-            value.setText(Lang.format("$1$:$2$", [sunrise.hour, sunrise.min.format("%02d")]));
+            drawable.setText(Lang.format("$1$:$2$", [sunrise.hour, sunrise.min.format("%02d")]));
         } else {
-            value.setText("N/A");
+            drawable.setText("N/A");
         }
-        value = View.findDrawableById("sunset");
+        drawable = View.findDrawableById("sunset");
         if (sunset instanceof Time.Gregorian.Info) {
-            value.setText(Lang.format("$1$:$2$", [sunset.hour, sunset.min.format("%02d")]));
+            drawable.setText(Lang.format("$1$:$2$", [sunset.hour, sunset.min.format("%02d")]));
         } else {
-            value.setText("N/A");
+            drawable.setText("N/A");
         }
 
         // calories
-        value = View.findDrawableById("calories");
-        value.setText(calories.format("%d"));
+        drawable = View.findDrawableById("calories");
+        drawable.setText(calories.format("%d"));
 
         // elapsed distance
-        value = View.findDrawableById("elapsedDistance");
-        value.setText((elapsedDistance / 1000).format("%.2f"));
+        drawable = View.findDrawableById("elapsedDistance");
+        drawable.setText((elapsedDistance / 1000).format("%.2f"));
 
         // temperature
-        value = View.findDrawableById("temperature");
-        value.setText(temperature.format("%d") + "°C");
+        drawable = View.findDrawableById("temperature");
+        drawable.setText(temperature.format("%d") + "°C");
 
         // barometric pressure
-        value = View.findDrawableById("meanSeaLevelPressure");
+        drawable = View.findDrawableById("meanSeaLevelPressure");
         value.setText((ambientPressure / 100).format("%d") + "/" + (meanSeaLevelPressure / 100).format("%d") + "hPa");
 
         // Call parent's onUpdate(dc) to redraw the layout
@@ -177,17 +185,17 @@ class BergsteigenDataField2View extends BergsteigenDataFieldAbstract {
         // battery symbol at the lower edge of the screen
         drawBattery(battery, dc, 100, 220, 40, 15);
 
-        var session = Application.getApp().session;
-        if ((session == null) || (session.isRecording() == false)) {
-            dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_WHITE);
-            dc.drawText(dc.getWidth() / 2, dc.getHeight() / 2, Graphics.FONT_SMALL, WatchUi.loadResource(Rez.Strings.pressButton), Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
-        }
+        // hint to press button
+        buttonHintOverlay(dc);
+        // GPS indicator, when session was not started yet
+        drawGPSIndicator(dc, 35, 137, 21, 42);
     }
 
     /*
      * @param Number heading heading in radians
      */
     protected function getHeadingLetter(heading) {
+        // println("BergsteigenDataField1View.getHeadingLetter");
         // shift by 11.75 degrees to simplify the if statements
         var headingDegrees = Math.toDegrees(heading) + 11.75;
         var letter = "-";

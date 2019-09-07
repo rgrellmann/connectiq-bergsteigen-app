@@ -12,10 +12,11 @@ using Toybox.ActivityRecording;
  * while walking or climbing.
  * Have a look at BergsteigenDataField2 for additional values.
  */
-class BergsteigenDataField1View extends BergsteigenDataFieldAbstract {
+class BergsteigenDataField1View extends BergsteigenDataFieldViewAbstract {
 
     protected var altitude = 0;
     protected var elapsedTime = 0;
+    protected var timerTime = 0;
     protected var currentHeartRate = 0;
     protected var currentHeartRateZone = 0;
     protected var totalAscent = 0;
@@ -24,7 +25,7 @@ class BergsteigenDataField1View extends BergsteigenDataFieldAbstract {
 
     function initialize() {
         println("BergsteigenDataField1View.initialize");
-        BergsteigenDataFieldAbstract.initialize();
+        BergsteigenDataFieldViewAbstract.initialize();
         hrZoneInfo = UserProfile.getHeartRateZones(UserProfile.getCurrentSport());
     }
 
@@ -52,11 +53,11 @@ class BergsteigenDataField1View extends BergsteigenDataFieldAbstract {
      * @param Activity.Info info
      */
     function compute(info) {
-        println("BergsteigenDataField1View.compute");
+        //println("BergsteigenDataField1View.compute");
         clockTime = System.getClockTime();
         battery = System.getSystemStats().battery;
         // initialize all numeric properties which should be part of info
-        var numberProperties = [:altitude, :currentHeartRate, :totalAscent, :totalDescent, :elapsedTime];
+        var numberProperties = [:altitude, :currentHeartRate, :totalAscent, :totalDescent, :elapsedTime, :timerTime];
         for (var i = 0; i < numberProperties.size(); i++) {
             if (info has numberProperties[i]) {
                 if (info[numberProperties[i]] != null) {
@@ -83,7 +84,7 @@ class BergsteigenDataField1View extends BergsteigenDataFieldAbstract {
      * @param Graphics.Dc dc
      */
     function onUpdate(dc) {
-        println("BergsteigenDataField1View.onUpdate");
+        //println("BergsteigenDataField1View.onUpdate");
         // Set the background color
         View.findDrawableById("Background1").setColor(getBackgroundColor());
         // Set the foreground color and value
@@ -91,49 +92,49 @@ class BergsteigenDataField1View extends BergsteigenDataFieldAbstract {
         if (getBackgroundColor() == Graphics.COLOR_BLACK) {
             foregroundColor = Graphics.COLOR_WHITE;
         }
+        var drawable;
         var drawables = ["altitude", "currentHeartRate", "totalDescent", "totalAscent", "elapsedTime"];
         for (var i = 0; i < drawables.size(); i++) {
-            var drawable = View.findDrawableById(drawables[i]);
+            drawable = View.findDrawableById(drawables[i]);
             drawable.setColor(foregroundColor);
         }
 
-        var value;
         // clock time
-        value = View.findDrawableById("clockTime");
-        value.setText(Lang.format("$1$:$2$", [clockTime.hour, clockTime.min.format("%02d")]));
+        drawable = View.findDrawableById("clockTime");
+        drawable.setText(Lang.format("$1$:$2$", [clockTime.hour, clockTime.min.format("%02d")]));
 
         // altitude
-        value = View.findDrawableById("altitude");
-        value.setText(altitude.format("%d"));
+        drawable = View.findDrawableById("altitude");
+        drawable.setText(altitude.format("%d"));
 
         // elapsed time
-        value = View.findDrawableById("elapsedTime");
-        var elapsedSeconds = elapsedTime / 1000;
+        drawable = View.findDrawableById("elapsedTime");
+        var elapsedSeconds = timerTime / 1000;
         var hours = elapsedSeconds / 3600;
         var minutes = (elapsedSeconds) / 60 % 60;
         var seconds = elapsedSeconds % 60;
         if (hours > 0) {
-            value.setText(Lang.format("$1$:$2$", [hours, minutes.format("%02d")]));
+            drawable.setText(Lang.format("$1$:$2$", [hours, minutes.format("%02d")]));
         } else {
-            value.setText(Lang.format("$1$:$2$", [minutes, seconds.format("%02d")]));
+            drawable.setText(Lang.format("$1$:$2$", [minutes, seconds.format("%02d")]));
         }
 
         // current heart rate
-        value = View.findDrawableById("currentHeartRate");
+        drawable = View.findDrawableById("currentHeartRate");
         if (currentHeartRateZone == 6) {
-            value.setColor(Graphics.COLOR_RED);
+            drawable.setColor(Graphics.COLOR_RED);
         } else if (currentHeartRateZone == 5) {
-            value.setColor(Graphics.COLOR_YELLOW);
+            drawable.setColor(Graphics.COLOR_YELLOW);
         } else {
-            value.setColor(foregroundColor);
+            drawable.setColor(foregroundColor);
         }
-        value.setText(currentHeartRate.format("%d"));
+        drawable.setText(currentHeartRate.format("%d"));
 
         // total ascent and descent
-        value = View.findDrawableById("totalAscent");
-        value.setText(totalAscent.format("%d") + 'm');
-        value = View.findDrawableById("totalDescent");
-        value.setText(totalDescent.format("%d") + 'm');
+        drawable = View.findDrawableById("totalAscent");
+        drawable.setText(totalAscent.format("%d") + 'm');
+        drawable = View.findDrawableById("totalDescent");
+        drawable.setText(totalDescent.format("%d") + 'm');
 
         // Call parent's onUpdate(dc) to redraw the layout
         DataField.onUpdate(dc);
@@ -144,15 +145,9 @@ class BergsteigenDataField1View extends BergsteigenDataFieldAbstract {
         drawBattery(battery, dc, 100, 220, 40, 15);
 
         // hint to press button
-        var session = Application.getApp().session;
-        if ((session == null) || (session.isRecording() == false)) {
-            dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_WHITE);
-            dc.drawText(
-                dc.getWidth() / 2, dc.getHeight() / 2, Graphics.FONT_SMALL,
-                WatchUi.loadResource(Rez.Strings.pressButton),
-                Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER
-            );
-        }
+        buttonHintOverlay(dc);
+        // GPS indicator, when session was not started yet
+        drawGPSIndicator(dc, 125, 30, 21, 42);
     }
 
 }

@@ -5,8 +5,9 @@ using Toybox.System;
 using Toybox.ActivityRecording;
 using Toybox.Activity;
 using Toybox.Attention;
+using Toybox.Position;
 
-var debug = false;
+var debug = true;
 
 function println(message) {
     if (debug) {
@@ -51,7 +52,8 @@ class BergsteigenApp extends Application.AppBase {
             new BergsteigenDataField2View(),
         ];
         currentViewNumber = 0;
-        return [views[0], new BergsteigenDataFieldDelegate()];
+        var delegate = new BergsteigenDataFieldDelegate();
+        return [views[0], delegate];
     }
 
     // Return the next view (or the first, if the current view is the last) and set the currentViewNumber
@@ -85,7 +87,7 @@ class BergsteigenApp extends Application.AppBase {
     // enable GPS
     function startGPS() {
         println("BergsteigenApp.startGPS");
-        Position.enableLocationEvents(Position.LOCATION_CONTINUOUS, null); // method(:onPosition)
+        Position.enableLocationEvents(Position.LOCATION_CONTINUOUS, method(:onPosition));
     }
 
     // disable GPS
@@ -108,23 +110,40 @@ class BergsteigenApp extends Application.AppBase {
         Sensor.enableSensorEvents(null);
     }
 
-    // callback for a location event
+    /*
+     * callback for a location event
+     * @param Position.Info positionInfo
+     */
     function onPosition(positionInfo) {
         println("BergsteigenApp.onPosition");
+        if (session == null) {
+            if (views[currentViewNumber].GPSAccuracy < Position.QUALITY_USABLE && positionInfo.accuracy >= Position.QUALITY_USABLE) {
+                Attention.backlight(true);
+            }
+            views[currentViewNumber].GPSAccuracy = positionInfo.accuracy;
+            // the UI update is triggered by a timer
+        } else {
+            // location data is provided by Activity.Info, callback no longer needed
+            Position.enableLocationEvents(Position.LOCATION_CONTINUOUS, null);
+        }
     }
 
-    // callback for a sensor event (typically once per second)
-    /* @var Sensor.Info sensorInfo */
+    /*
+     * callback for a sensor event (typically once per second)
+     * @var Sensor.Info sensorInfo
+     */
     function onSensor(sensorInfo) {
-        println("BergsteigenApp.onSensor");
+        //println("BergsteigenApp.onSensor");
         println("sensorInfo temperature: " + sensorInfo.temperature + " pressure: " + sensorInfo.pressure);
         var activityInfo = Activity.getActivityInfo();
-        println("activityInfo ambientPressure: " + activityInfo.ambientPressure + " meanSeaLevelPressure: " + activityInfo.meanSeaLevelPressure + " rawAmbientPressure: " + activityInfo.rawAmbientPressure);
-        if (activityInfo != null && views != null && currentViewNumber != null
+        if (activityInfo) {
+            println("activityInfo meanSeaLevelPressure: " + activityInfo.meanSeaLevelPressure);
+        }
+        if (views != null && currentViewNumber != null
             && views[currentViewNumber] != null && views[currentViewNumber] has :compute
         ) {
             views[currentViewNumber].compute(activityInfo);
-            WatchUi.requestUpdate();
+            // the UI update is triggered by a timer
         }
     }
 
@@ -132,6 +151,7 @@ class BergsteigenApp extends Application.AppBase {
     function startStopSession() {
         println("BergsteigenApp.startStopSession");
         if (session == null) {
+            println("session is null");
             session = ActivityRecording.createSession({
                 :name => WatchUi.loadResource(Rez.Strings.activityName),
                 :sport => ActivityRecording.SPORT_MOUNTAINEERING  // SPORT_HIKING
@@ -139,15 +159,19 @@ class BergsteigenApp extends Application.AppBase {
             session.start();
             vibrate();
             println("session created and started");
+            // WatchUi.requestUpdate();
         } else if (session.isRecording() == false) {
+            println("session status: is not recording");
             session.start();
             vibrate();
             println("session continued");
+            // WatchUi.requestUpdate();
         } else if (session.isRecording()) {
+            println("session status: is recording");
             session.stop();
             vibrate();
-            saveDiscardMenu();
             println("session stopped");
+            saveDiscardMenu();
         }
     }
 
@@ -170,18 +194,27 @@ class BergsteigenApp extends Application.AppBase {
     // show menu for saving or discarding the ActivityRecording session
     function saveDiscardMenu() {
         println("BergsteigenApp.saveDiscardMenu");
+        /*
         var menu = new WatchUi.Menu2({:title => WatchUi.loadResource(Rez.Strings.pause)});
-        var delegate;
-        menu.addItem(new WatchUi.MenuItem(WatchUi.loadResource(Rez.Strings.save), null, "save", null));
-        menu.addItem(new WatchUi.MenuItem(WatchUi.loadResource(Rez.Strings.discard), null, "discard", null));
-        delegate = new BergsteigenSaveMenuDelegate();
+        menu.addItem(new WatchUi.MenuItem(WatchUi.loadResource(Rez.Strings.optionContinue), null, :resume, null));
+        menu.addItem(new WatchUi.MenuItem(WatchUi.loadResource(Rez.Strings.save), null, :save, null));
+        menu.addItem(new WatchUi.MenuItem(WatchUi.loadResource(Rez.Strings.discard), null, :discard, null));
+        var delegate = new BergsteigenSaveMenuDelegate2();
+        */
+        var menu = new WatchUi.Menu();
+        menu.setTitle(WatchUi.loadResource(Rez.Strings.pause));
+        menu.addItem(WatchUi.loadResource(Rez.Strings.optionContinue), :resume);
+        menu.addItem(WatchUi.loadResource(Rez.Strings.save), :save);
+        menu.addItem(WatchUi.loadResource(Rez.Strings.discard), :discard);
+        var delegate = new BergsteigenSaveMenuDelegate();
         WatchUi.pushView(menu, delegate, WatchUi.SLIDE_IMMEDIATE);
     }
 
     // engage the vibration motor
     function vibrate() {
+        println("BergsteigenApp.vibrate");
         if (Attention has :vibrate) {
-            var vibeData = [new Attention.VibeProfile(50, 500)];
+            var vibeData = [new Attention.VibeProfile(50, 100)];
             Attention.vibrate(vibeData);
         }
     }
