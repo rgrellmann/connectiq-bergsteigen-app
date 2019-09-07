@@ -14,5 +14,8 @@
     <string id="pause">Pause</string>
     <string id="save">Speichern</string>
     <string id="discard">Verwerfen</string>
+    <string id="reallyDiscard">Aufzeichnung verwerfen?</string>
     <string id="optionContinue">Fortsetzen</string>
+
+    <string id="GPSwait">Warte auf GPS...</string>
 </strings>

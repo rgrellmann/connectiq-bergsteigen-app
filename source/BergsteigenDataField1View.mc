@@ -87,21 +87,22 @@ class BergsteigenDataField1View extends BergsteigenDataFieldViewAbstract {
         //println("BergsteigenDataField1View.onUpdate");
         // Set the background color
         View.findDrawableById("Background1").setColor(getBackgroundColor());
+
+        // clock time (opposite color)
+        var drawable = View.findDrawableById("clockTime");
+        drawable.setColor(getBackgroundColor());
+        drawable.setText(Lang.format("$1$:$2$", [clockTime.hour, clockTime.min.format("%02d")]));
+
         // Set the foreground color and value
         var foregroundColor = Graphics.COLOR_BLACK;
         if (getBackgroundColor() == Graphics.COLOR_BLACK) {
             foregroundColor = Graphics.COLOR_WHITE;
         }
-        var drawable;
         var drawables = ["altitude", "currentHeartRate", "totalDescent", "totalAscent", "elapsedTime"];
         for (var i = 0; i < drawables.size(); i++) {
             drawable = View.findDrawableById(drawables[i]);
             drawable.setColor(foregroundColor);
         }
-
-        // clock time
-        drawable = View.findDrawableById("clockTime");
-        drawable.setText(Lang.format("$1$:$2$", [clockTime.hour, clockTime.min.format("%02d")]));
 
         // altitude
         drawable = View.findDrawableById("altitude");

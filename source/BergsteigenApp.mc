@@ -6,11 +6,16 @@ using Toybox.ActivityRecording;
 using Toybox.Activity;
 using Toybox.Attention;
 using Toybox.Position;
+using Toybox.Timer;
+using Toybox.System;
+using Toybox.Lang;
 
-var debug = true;
+var debug = false;
 
 function println(message) {
     if (debug) {
+        var clockTime = System.getClockTime();
+        message = Lang.format("$1$:$2$:$3$", [clockTime.hour, clockTime.min.format("%02d"), clockTime.sec.format("%02d")]) + " " + message;
         System.println(message);
     }
 }
@@ -115,10 +120,11 @@ class BergsteigenApp extends Application.AppBase {
      * @param Position.Info positionInfo
      */
     function onPosition(positionInfo) {
-        println("BergsteigenApp.onPosition");
+        //println("BergsteigenApp.onPosition");
         if (session == null) {
             if (views[currentViewNumber].GPSAccuracy < Position.QUALITY_USABLE && positionInfo.accuracy >= Position.QUALITY_USABLE) {
                 Attention.backlight(true);
+                vibrate();
             }
             views[currentViewNumber].GPSAccuracy = positionInfo.accuracy;
             // the UI update is triggered by a timer
@@ -133,11 +139,11 @@ class BergsteigenApp extends Application.AppBase {
      * @var Sensor.Info sensorInfo
      */
     function onSensor(sensorInfo) {
-        //println("BergsteigenApp.onSensor");
-        println("sensorInfo temperature: " + sensorInfo.temperature + " pressure: " + sensorInfo.pressure);
+        // println("BergsteigenApp.onSensor");
+        // println("sensorInfo temperature: " + sensorInfo.temperature + " pressure: " + sensorInfo.pressure);
         var activityInfo = Activity.getActivityInfo();
         if (activityInfo) {
-            println("activityInfo meanSeaLevelPressure: " + activityInfo.meanSeaLevelPressure);
+            // println("activityInfo meanSeaLevelPressure: " + activityInfo.meanSeaLevelPressure);
         }
         if (views != null && currentViewNumber != null
             && views[currentViewNumber] != null && views[currentViewNumber] has :compute
@@ -159,13 +165,11 @@ class BergsteigenApp extends Application.AppBase {
             session.start();
             vibrate();
             println("session created and started");
-            // WatchUi.requestUpdate();
         } else if (session.isRecording() == false) {
             println("session status: is not recording");
             session.start();
             vibrate();
             println("session continued");
-            // WatchUi.requestUpdate();
         } else if (session.isRecording()) {
             println("session status: is recording");
             session.stop();
@@ -188,6 +192,15 @@ class BergsteigenApp extends Application.AppBase {
         println("BergsteigenApp.discardSession");
         session.discard();
         session = null;
+        // var timer = new Timer.Timer();
+        // timer.start(method(:exit), 150, false);
+        System.exit();
+    }
+
+    // exit as timer callback due to problems with the confirmation dialog
+    function exit() {
+        println("BergsteigenApp.exit");
+        WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
         System.exit();
     }
 
@@ -208,13 +221,14 @@ class BergsteigenApp extends Application.AppBase {
         menu.addItem(WatchUi.loadResource(Rez.Strings.discard), :discard);
         var delegate = new BergsteigenSaveMenuDelegate();
         WatchUi.pushView(menu, delegate, WatchUi.SLIDE_IMMEDIATE);
+        println("BergsteigenApp.saveDiscardMenu after pushView / end of function");
     }
 
     // engage the vibration motor
     function vibrate() {
         println("BergsteigenApp.vibrate");
         if (Attention has :vibrate) {
-            var vibeData = [new Attention.VibeProfile(50, 100)];
+            var vibeData = [new Attention.VibeProfile(50, 500)];
             Attention.vibrate(vibeData);
         }
     }

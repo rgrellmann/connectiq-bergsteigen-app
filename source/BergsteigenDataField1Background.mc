@@ -32,7 +32,7 @@ class Background1 extends WatchUi.Drawable {
         // fill top and bottom edge
         var color = Graphics.COLOR_BLACK;
         if (backgroundColor == Graphics.COLOR_BLACK) {
-            color = Graphics.COLOR_WHITE;
+            color = Graphics.COLOR_LT_GRAY;
         }
         dc.setColor(color, Graphics.COLOR_TRANSPARENT);
         dc.fillRectangle(0, 0, 240, 30);

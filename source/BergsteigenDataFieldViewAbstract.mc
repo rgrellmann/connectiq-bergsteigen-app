@@ -56,14 +56,24 @@ class BergsteigenDataFieldViewAbstract extends WatchUi.DataField {
         var session = Application.getApp().session;
         var text = null;
         if (session == null) {
-            text = WatchUi.loadResource(Rez.Strings.pressButton);
+            if (GPSAccuracy < Position.QUALITY_USABLE) {
+                text = WatchUi.loadResource(Rez.Strings.GPSwait);
+            } else {
+                text = WatchUi.loadResource(Rez.Strings.pressButton);
+            }
         } else if (session.isRecording() == false) {
             text = WatchUi.loadResource(Rez.Strings.pause);
         }
         if (text) {
-            dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_BLACK);
+            var color = Graphics.COLOR_BLUE;
+            var backgroundColor = Graphics.COLOR_BLACK;
+            if (getBackgroundColor() == Graphics.COLOR_BLACK) {
+                color = Graphics.COLOR_BLUE;
+                backgroundColor = Graphics.COLOR_WHITE;
+            }
+            dc.setColor(backgroundColor, Graphics.COLOR_TRANSPARENT);
             dc.fillRectangle(0, dc.getHeight() / 2 - 13, dc.getWidth(), 30);
-            dc.setColor(Graphics.COLOR_GREEN, Graphics.COLOR_TRANSPARENT);
+            dc.setColor(color, Graphics.COLOR_TRANSPARENT);
             dc.drawText(
                 dc.getWidth() / 2, dc.getHeight() / 2 - 1, Graphics.FONT_SMALL,
                 text,
@@ -83,19 +93,25 @@ class BergsteigenDataFieldViewAbstract extends WatchUi.DataField {
      */
     protected function drawBattery(battery, dc, xStart, yStart, width, height) {
         // println("BergsteigenDataFieldViewAbstract.drawBattery");
-        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_WHITE);
+        var color = Graphics.COLOR_WHITE;
+        var green = Graphics.COLOR_GREEN;
+        if (getBackgroundColor() == Graphics.COLOR_BLACK) {
+            color = Graphics.COLOR_BLACK;
+            green = Graphics.COLOR_DK_GREEN;
+        }
+        dc.setColor(color, Graphics.COLOR_WHITE);
         dc.fillRectangle(xStart, yStart, width, height);
         if (battery < 10) {
             dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
             dc.drawText(xStart + 3 + width / 2, yStart + 6, Graphics.FONT_XTINY, format("$1$%", [battery.format("%d")]), Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
-        } else if (battery < 25) {
+        } else if (battery < 20) {
             dc.setColor(Graphics.COLOR_YELLOW, Graphics.COLOR_TRANSPARENT);
         } else {
-            dc.setColor(Graphics.COLOR_GREEN, Graphics.COLOR_TRANSPARENT);
+            dc.setColor(green, Graphics.COLOR_TRANSPARENT);
         }
         dc.fillRectangle(xStart + 1, yStart + 1, (width-2) * battery / 100, height - 2);
 
-        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_WHITE);
+        dc.setColor(color, Graphics.COLOR_WHITE);
         dc.fillRectangle(xStart + width - 1, yStart + 3, 4, height - 6);
     }
 
@@ -113,12 +129,16 @@ class BergsteigenDataFieldViewAbstract extends WatchUi.DataField {
         if (session) {
             return;
         }
-        //println("BergsteigenDataFieldViewAbstract.drawGPSIndicator");
+        println("BergsteigenDataFieldViewAbstract.drawGPSIndicator");
         var color1 = Graphics.COLOR_TRANSPARENT;
         var color2 = Graphics.COLOR_TRANSPARENT;
         var color3 = Graphics.COLOR_TRANSPARENT;
         var outlineColor = Graphics.COLOR_WHITE;
         var bgColor = Graphics.COLOR_BLACK;
+        if (getBackgroundColor() == Graphics.COLOR_BLACK) {
+            bgColor = Graphics.COLOR_WHITE;
+            outlineColor = Graphics.COLOR_BLACK;
+        }
 
         switch (GPSAccuracy) {
           case Position.QUALITY_NOT_AVAILABLE:

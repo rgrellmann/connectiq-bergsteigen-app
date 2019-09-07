@@ -14,5 +14,8 @@
     <string id="pause">Pause</string>
     <string id="save">Save</string>
     <string id="discard">Discard</string>
+    <string id="reallyDiscard">Discard Session?</string>
     <string id="optionContinue">Continue</string>
+    
+    <string id="GPSwait">Waiting for GPS...</string>
 </strings>

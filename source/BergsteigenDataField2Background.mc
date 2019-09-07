@@ -34,7 +34,7 @@ class Background2 extends WatchUi.Drawable {
         // fill top and bottom edge
         var color = Graphics.COLOR_BLACK;
         if (backgroundColor == Graphics.COLOR_BLACK) {
-            color = Graphics.COLOR_WHITE;
+            color = Graphics.COLOR_LT_GRAY;
         }
         dc.setColor(color, Graphics.COLOR_TRANSPARENT);
         dc.fillRectangle(0, 0, 240, 30);
@@ -54,7 +54,9 @@ class Background2 extends WatchUi.Drawable {
 
         // heading symbol
         dc.setColor(Graphics.COLOR_DK_BLUE, Graphics.COLOR_TRANSPARENT);
-        var pts = [[41, 115], [37, 127], [41, 123], [45, 127], [41, 115]];
+        xStart = 19;
+        yStart = 109;
+        var pts = [[xStart, yStart], [xStart - 6, yStart + 18], [xStart, yStart + 12], [xStart + 6, yStart + 18], [xStart, yStart]];
         dc.fillPolygon(pts);
     }
 

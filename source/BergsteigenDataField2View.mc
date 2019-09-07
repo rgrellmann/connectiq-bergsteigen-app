@@ -107,29 +107,29 @@ class BergsteigenDataField2View extends BergsteigenDataFieldViewAbstract {
         // Set the background color
         View.findDrawableById("Background2").setColor(getBackgroundColor());
 
-        // Set the foreground color
+        // clock time (opposite color)
+        var drawable = View.findDrawableById("clockTime");
+        drawable.setColor(getBackgroundColor());
+        drawable.setText(Lang.format("$1$:$2$", [clockTime.hour, clockTime.min.format("%02d")]));
+
+        // Set the foreground color for drawables
         var foregroundColor = Graphics.COLOR_BLACK;
         if (getBackgroundColor() == Graphics.COLOR_BLACK) {
             foregroundColor = Graphics.COLOR_WHITE;
         }
-        var drawable;
         var drawables = ["calories", "elapsedDistance", "sunrise", "sunset", "currentLat", "currentLon", "temperature", "currentHeading", "currentHeadingDeg", "meanSeaLevelPressure"];
         for (var i = 0; i < drawables.size(); i++) {
             drawable = View.findDrawableById(drawables[i]);
             drawable.setColor(foregroundColor);
         }
 
-        // clock time
-        drawable = View.findDrawableById("clockTime");
-        drawable.setText(Lang.format("$1$:$2$", [clockTime.hour, clockTime.min.format("%02d")]));
-
         // position (lat/lon)
         if (currentLocation instanceof Toybox.Position.Location) {
             var locationDecimal = currentLocation.toDegrees();
             drawable = View.findDrawableById("currentLat");
-            drawable.setText(locationDecimal[0].format("%.5f"));
+            drawable.setText(locationDecimal[0].format("%.4f"));
             drawable = View.findDrawableById("currentLon");
-            drawable.setText(locationDecimal[1].format("%.5f"));
+            drawable.setText(locationDecimal[1].format("%.4f"));
         } else {
             drawable = View.findDrawableById("currentLat");
             drawable.setText("N/A");
@@ -175,7 +175,7 @@ class BergsteigenDataField2View extends BergsteigenDataFieldViewAbstract {
 
         // barometric pressure
         drawable = View.findDrawableById("meanSeaLevelPressure");
-        value.setText((ambientPressure / 100).format("%d") + "/" + (meanSeaLevelPressure / 100).format("%d") + "hPa");
+        drawable.setText((ambientPressure / 100).format("%d") + "/" + (meanSeaLevelPressure / 100).format("%d") + "hPa");
 
         // Call parent's onUpdate(dc) to redraw the layout
         DataField.onUpdate(dc);
@@ -188,7 +188,7 @@ class BergsteigenDataField2View extends BergsteigenDataFieldViewAbstract {
         // hint to press button
         buttonHintOverlay(dc);
         // GPS indicator, when session was not started yet
-        drawGPSIndicator(dc, 35, 137, 21, 42);
+        drawGPSIndicator(dc, 125, 30, 21, 42);
     }
 
     /*
