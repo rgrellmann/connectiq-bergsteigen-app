@@ -29,6 +29,13 @@ class BergsteigenDataFieldViewAbstract extends WatchUi.DataField {
         timer = new Timer.Timer();
     }
 
+    // DataField background color
+    public function getBackgroundColor() {
+        var backgroundColor = Application.getApp().Properties.getValue("backgroundColor");
+        println("BergsteigenDataFieldViewAbstract.getBackgroundColor " + backgroundColor);
+        return backgroundColor;
+    }
+
     // is called when this View is brought to the foreground
     public function onShow() {
         println("BergsteigenDataFieldViewAbstract.onShow");
